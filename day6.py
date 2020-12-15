@@ -22,24 +22,23 @@ def remove_dupes(s):
 
   return deduped
 
-def count_dupes(group_answers):
-  print(group_answers)
-  dupe_holder = list()
+def get_dupes(group_answers):
+  dupe_holder = None
 
   if len(group_answers) == 1:
-    print("ONLY A SINGLE PERSON {}".format(group_answers))
-    return len(group_answers[0])
+    return group_answers[0]
   else:
     for answers in group_answers:
-      if len(dupe_holder) == 0:
-        dupe_holder = sorted(list(answers))
-        print("First try. Dupeholder is empty. New holder = {}".format(dupe_holder))
+      if dupe_holder is None:
+        dupe_holder = list(answers)
       else:
-        print("Dupeholder: {} ----- Next group: {}".format(''.join(dupe_holder), ''.join(sorted(answers))))
-        dupe_holder = ''.join(set(dupe_holder) & set(sorted(answers)))
-        print(list(dupe_holder))
+        dupes = "".join(set(dupe_holder) & set(answers))
+        if dupes == "":
+          return list()
+        else:
+          dupe_holder = list(dupes)
       
-  return len(dupe_holder)
+  return dupe_holder
 
 
 # ------ Part 1 -------
@@ -47,7 +46,6 @@ total_yes = 0
 
 for group in puzzle_input:
   deduped_group = remove_dupes(group.replace("\n", ""))
-
   
   for number in deduped_group:
     total_yes += len(number)
@@ -60,8 +58,7 @@ part2_total_yes = 0
 
 for group in puzzle_input:
   group = list(filter(None, group.split("\n")))
-  part2_total_yes += count_dupes(group)
-  print("TOTAL: {}".format(part2_total_yes))
-
+  dupes = get_dupes(group)
+  part2_total_yes += len(dupes)
 
 print("PART 2 --- TOTAL YES's: {}".format(part2_total_yes))
