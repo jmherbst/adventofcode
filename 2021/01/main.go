@@ -11,6 +11,7 @@ import (
 func Solve(inputfile string) {
 	input := ReadInput(inputfile)
 	Part1(input)
+	Part2(input)
 }
 
 // Part1 solves:
@@ -40,7 +41,35 @@ func Part1(input []int) {
 }
 
 // Part2 solves:
-func Part2() {
+func Part2(input []int) {
+	increases := 0
+	size := 3
+
+	// input := [9]int{0, 2, 4, 6, 0, 2, 2, 2, 2} // 6, 12i, 10, 8, 4, 6i, 6  -- 3
+	inputLength := len(input)
+
+	if inputLength < size {
+		log.Fatal("Input too small")
+	}
+
+	var windowSum int
+	for _, v := range input[:size] {
+		windowSum += v
+	}
+
+	previousSum := windowSum
+
+	for i := 0; i < inputLength-size; i++ {
+
+		windowSum = windowSum - input[i] + input[i+size]
+		if windowSum > previousSum {
+			increases++
+		} else {
+		}
+		previousSum = windowSum
+	}
+
+	log.Printf("Part 2: %d", increases)
 
 }
 
