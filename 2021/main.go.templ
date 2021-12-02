@@ -1,23 +1,49 @@
 package main
 
 // Solve prints out solutions for the puzzle
-func Solve(fname string) {
+func Solve(inputfile string) {
+    input := ReadInput(inputfile)
+	Part1(input)
+	Part2(input)
+}
+
+// Part1 solves:
+func Part2(input []int) {
 
 }
 
-// Part1 solves: 
-func Part1() {
-
-}
-
-// Part2 solves: 
-func Part2() {
+// Part2 solves:
+func Part2(input []int) {
 
 }
 
 // ReadInput parses the puzzle's input.txt file
-func ReadInput(fname string) {
+func ReadInput(fname string) []int {
+	var input []int
+	file, err := os.Open(fname)
+	if err != nil {
+		return input
+	}
+	defer file.Close()
 
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		item := scanner.Text()
+
+		if item == "\n" {
+			// Removes empty newline from end of array
+			continue
+		} else {
+			i, err := strconv.Atoi(item)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			input = append(input, i)
+		}
+	}
+
+	return input
 }
 
 // I include main() so that go doesn't yell about a main package having no main() function
