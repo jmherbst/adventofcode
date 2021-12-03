@@ -11,8 +11,7 @@ import (
 func Solve(inputfile string) {
 	input := ReadInput(inputfile)
 	Part1(input)
-	a := Part2(input)
-	log.Printf("Part 2 -- Solution: %s", a)
+	Part2(input)
 }
 
 // Part1 solves:
@@ -20,18 +19,11 @@ func Part1(input []string) {
 	gamma := ""
 	epsilon := ""
 	total := len(input)
+	a := input[0]
+	// b := len(a)
 
-	// for _, binaryString := range input {
-	// 	for j, char := range binaryString {
-	// 		if string(char) == "1" {
-	// 			onesCounter[j]++
-	// 		}
-	// 	}
-	// }
-
-	onesCounter := getOnesCount(input)
-
-	for _, count := range onesCounter {
+	for i, _ := range a {
+		count := getOnesCount(input, i)
 		if count > (total / 2) {
 			gamma = gamma + "1"
 			epsilon = epsilon + "0"
@@ -51,21 +43,20 @@ func Part1(input []string) {
 }
 
 // Part2 solves:
-func Part2(input []string) []string {
-	// To find oxygen generator rating, determine the most common value (0 or 1) in the current bit position,
-	//     and keep only numbers with that bit in that position. If 0 and 1 are equally common, keep values with a 1 in the position being considered.
-	// To find CO2 scrubber rating, determine the least common value (0 or 1) in the current bit position,
-	//     and keep only numbers with that bit in that position. If 0 and 1 are equally common, keep values with a 0 in the position being considered.
-	onesCounter := make([]int, len(input[0]))
-	ox := ""
-	c02 := ""
-	total := len(input)
+func Part2(input []string) {
+	ox := getMatchingSignals(input, true, 0)[0]
+	co2 := getMatchingSignals(input, false, 0)[0]
 
-	log.Printf("Part 2 -- Life Support Rating: %d * %d = %d", oxI, c02I, oxI*c02I)
+	oxI, _ := strconv.ParseInt(ox, 2, 64)
+	co2I, _ := strconv.ParseInt(co2, 2, 64)
 
+	log.Printf("Ox Signal: %s -- %d", ox, oxI)
+	log.Printf("Co2 Signal: %s -- %d", co2, co2I)
+
+	log.Printf("Part 2 -- Life Support Rating: %d * %d = %d", oxI, co2I, oxI*co2I)
 }
 
-func getOnesCount(input []string) []int {
+func getOnesCount(input []string, position int) int {
 	onesCounter := make([]int, len(input[0]))
 
 	for _, binaryString := range input {
@@ -76,15 +67,42 @@ func getOnesCount(input []string) []int {
 		}
 	}
 
-	return onesCounter
+	return onesCounter[position]
 }
 
-func getMostCommon(count int, total int) string {
-	if count >= (total / 2) {
-		return "1"
-	} else {
-		return "0"
+func getMatchingSignals(input []string, mostCommon bool, position int) []string {
+	if len(input) == 1 {
+		return input
 	}
+
+	numOfOnes := getOnesCount(input, position)
+
+	var signal string
+	length := (len(input) / 2) + (len(input) % 2)
+	if numOfOnes >= length {
+		if mostCommon {
+			signal = "1"
+		} else {
+			signal = "0"
+		}
+	} else {
+		if mostCommon {
+			signal = "0"
+		} else {
+			signal = "1"
+		}
+	}
+
+	var matchingSignals []string
+	for _, binaryString := range input {
+
+		if string(binaryString[position]) == signal {
+			matchingSignals = append(matchingSignals, binaryString)
+		} else {
+		}
+	}
+
+	return getMatchingSignals(matchingSignals, mostCommon, position+1)
 }
 
 // ReadInput parses the puzzle's input.txt file
